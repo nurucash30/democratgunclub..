@@ -1,0 +1,864 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font-sans, 'Segoe UI', sans-serif); background: var(--color-background-primary); color: var(--color-text-primary); }
+  .store { max-width: 960px; margin: 0 auto; }
+
+  /* ANNOUNCEMENT BAR */
+  .announce-bar { background: #111; color: #fff; text-align: center; font-size: 12px; letter-spacing: 0.07em; padding: 9px 16px; font-weight: 500; }
+
+  /* HEADER */
+  .header { display: flex; align-items: center; justify-content: space-between; padding: 14px 28px; border-bottom: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); position: sticky; top: 0; z-index: 100; }
+  .logo-wrap { display: flex; align-items: center; gap: 10px; }
+  .logo-circle { width: 34px; height: 34px; background: #111; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .logo-circle svg { width: 18px; height: 18px; }
+  .logo-name { font-size: 14px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-primary); }
+  .header-nav { display: flex; gap: 22px; }
+  .header-nav a { font-size: 12px; color: var(--color-text-secondary); text-decoration: none; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 500; cursor: pointer; }
+  .header-nav a:hover { color: var(--color-text-primary); }
+  .header-icons { display: flex; gap: 12px; align-items: center; }
+  .icon-btn { background: none; border: none; cursor: pointer; color: var(--color-text-secondary); display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; transition: background 0.2s; }
+  .icon-btn:hover { background: var(--color-background-secondary); }
+  .cart-wrap { position: relative; }
+  .cart-dot { position: absolute; top: -3px; right: -3px; width: 14px; height: 14px; background: #c8a96e; color: #111; border-radius: 50%; font-size: 9px; display: flex; align-items: center; justify-content: center; font-weight: 500; }
+
+  /* HERO */
+  .hero { position: relative; background: #111; min-height: 420px; display: flex; align-items: center; overflow: hidden; }
+  .hero-bg { position: absolute; inset: 0; opacity: 0.05; background-image: repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%); background-size: 18px 18px; }
+  .hero-left { position: relative; z-index: 2; padding: 56px 52px; flex: 1; }
+  .hero-eyebrow { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #c8a96e; font-weight: 500; margin-bottom: 14px; }
+  .hero-title { font-size: 40px; font-weight: 500; color: #fff; line-height: 1.15; margin-bottom: 18px; }
+  .hero-title em { font-style: normal; color: #c8a96e; }
+  .hero-sub { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.65; margin-bottom: 28px; max-width: 360px; }
+  .hero-ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn-gold { background: #c8a96e; color: #111; border: none; padding: 12px 26px; font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: background 0.2s; }
+  .btn-gold:hover { background: #b8954f; }
+  .btn-ghost { background: transparent; color: #fff; border: 0.5px solid rgba(255,255,255,0.35); padding: 12px 26px; font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: border-color 0.2s; }
+  .btn-ghost:hover { border-color: #fff; }
+  .hero-right { flex: 0 0 340px; height: 420px; overflow: hidden; position: relative; }
+  .hero-img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; height: 100%; }
+  .hero-img-cell { overflow: hidden; }
+  .hero-img-cell img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
+  .hero-img-cell:hover img { transform: scale(1.05); }
+
+  /* TRUST BAR */
+  .trust-bar { background: var(--color-background-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; }
+  .trust-item { display: flex; align-items: center; gap: 7px; padding: 13px 0; flex: 1; justify-content: center; border-right: 0.5px solid var(--color-border-tertiary); }
+  .trust-item:last-child { border-right: none; }
+  .trust-icon { font-size: 15px; }
+  .trust-text { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); letter-spacing: 0.03em; }
+
+  /* SECTION HEADER */
+  .sec-head { text-align: center; padding: 44px 28px 28px; }
+  .sec-eyebrow { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: #c8a96e; font-weight: 500; margin-bottom: 8px; }
+  .sec-title { font-size: 24px; font-weight: 500; color: var(--color-text-primary); letter-spacing: -0.01em; margin-bottom: 8px; }
+  .sec-sub { font-size: 13px; color: var(--color-text-secondary); max-width: 420px; margin: 0 auto; line-height: 1.6; }
+
+  /* FILTER BAR */
+  .filter-bar { display: flex; align-items: center; justify-content: space-between; padding: 0 28px 14px; }
+  .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .filter-tab { background: none; border: 0.5px solid var(--color-border-secondary); padding: 6px 14px; font-size: 11px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; border-radius: 2px; color: var(--color-text-secondary); transition: all 0.2s; }
+  .filter-tab.active, .filter-tab:hover { background: #111; color: #fff; border-color: #111; }
+  .sort-sel { font-size: 12px; border: 0.5px solid var(--color-border-secondary); padding: 6px 10px; border-radius: 2px; background: var(--color-background-primary); color: var(--color-text-secondary); cursor: pointer; }
+
+  /* PRODUCT GRID */
+  .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--color-border-tertiary); margin: 0 28px; border: 0.5px solid var(--color-border-tertiary); }
+  .product-card { background: var(--color-background-primary); cursor: pointer; position: relative; overflow: hidden; }
+  .product-img-wrap { aspect-ratio: 3/4; overflow: hidden; position: relative; background: var(--color-background-secondary); }
+  .product-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.45s ease; }
+  .product-img-wrap img.hover-img { position: absolute; inset: 0; opacity: 0; transition: opacity 0.35s ease; }
+  .product-card:hover .product-img-wrap img.main-img { transform: scale(1.04); }
+  .product-card:hover .product-img-wrap img.hover-img { opacity: 1; }
+  .product-badge { position: absolute; top: 10px; left: 10px; font-size: 9px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; padding: 3px 7px; border-radius: 1px; z-index: 2; }
+  .badge-new { background: #111; color: #fff; }
+  .badge-sold { background: #888; color: #fff; }
+  .badge-hot { background: #c8a96e; color: #111; }
+  .quick-add { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(17,17,17,0.92); color: #fff; text-align: center; font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px; transform: translateY(100%); transition: transform 0.25s ease; cursor: pointer; z-index: 3; }
+  .product-card:hover .quick-add { transform: translateY(0); }
+  .product-info { padding: 12px 14px 16px; }
+  .product-cat { font-size: 10px; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+  .product-name { font-size: 12px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 7px; line-height: 1.35; }
+  .swatches { display: flex; gap: 4px; margin-bottom: 8px; }
+  .swatch { width: 14px; height: 14px; border-radius: 50%; border: 0.5px solid var(--color-border-secondary); cursor: pointer; transition: transform 0.15s; }
+  .swatch.active { border: 1.5px solid var(--color-text-primary); }
+  .swatch:hover { transform: scale(1.2); }
+  .price-row { display: flex; align-items: center; justify-content: space-between; }
+  .price { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .stock-ok { font-size: 10px; font-weight: 500; color: #27ae60; }
+  .stock-low { font-size: 10px; font-weight: 500; color: #e67e22; }
+  .stock-out { font-size: 10px; font-weight: 500; color: #c0392b; }
+
+  /* SHOP THE LOOK */
+  .stl-wrap { margin: 0 28px 52px; }
+  .stl-box { border: 0.5px solid var(--color-border-tertiary); border-radius: 3px; overflow: hidden; display: grid; grid-template-columns: 1.1fr 1fr; }
+  .stl-img-side { position: relative; background: #f0ede8; min-height: 380px; overflow: hidden; }
+  .stl-img-side img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .stl-pin { position: absolute; width: 22px; height: 22px; background: #fff; border: 1.5px solid #111; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.18); z-index: 2; transition: transform 0.2s; }
+  .stl-pin:hover { transform: scale(1.15); }
+  .stl-right { padding: 24px; display: flex; flex-direction: column; justify-content: center; gap: 14px; background: var(--color-background-primary); }
+  .stl-heading { font-size: 18px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
+  .stl-heading-sub { font-size: 12px; color: var(--color-text-secondary); }
+  .stl-row { display: flex; align-items: center; gap: 10px; padding: 10px; border: 0.5px solid var(--color-border-tertiary); border-radius: 3px; cursor: pointer; transition: border-color 0.2s; }
+  .stl-row:hover { border-color: var(--color-border-primary); }
+  .stl-thumb { width: 46px; height: 46px; border-radius: 2px; overflow: hidden; flex-shrink: 0; background: var(--color-background-secondary); }
+  .stl-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .stl-info { flex: 1; }
+  .stl-pname { font-size: 12px; font-weight: 500; color: var(--color-text-primary); }
+  .stl-pprice { font-size: 11px; color: var(--color-text-secondary); }
+  .stl-add-btn { background: none; border: 0.5px solid #c8a96e; color: #c8a96e; font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 10px; border-radius: 2px; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+  .stl-add-btn:hover { background: #c8a96e; color: #111; }
+  .stl-footer { display: flex; align-items: center; justify-content: space-between; border-top: 0.5px solid var(--color-border-tertiary); padding-top: 14px; }
+  .stl-total-price { font-size: 16px; font-weight: 500; }
+  .stl-buy-btn { background: #111; color: #fff; border: none; padding: 10px 18px; font-size: 11px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: background 0.2s; }
+  .stl-buy-btn:hover { background: #333; }
+
+  /* BRAND SECTION */
+  .brand-sec { background: #111; display: grid; grid-template-columns: 1fr 1fr; min-height: 380px; }
+  .brand-img-side { overflow: hidden; }
+  .brand-img-side img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .brand-content { padding: 52px 44px; display: flex; flex-direction: column; justify-content: center; }
+  .brand-ey { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #c8a96e; font-weight: 500; margin-bottom: 14px; }
+  .brand-title { font-size: 26px; font-weight: 500; color: #fff; line-height: 1.25; margin-bottom: 16px; }
+  .brand-body { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.75; margin-bottom: 24px; }
+  .brand-stats { display: flex; gap: 28px; margin-bottom: 26px; }
+  .stat-num { font-size: 22px; font-weight: 500; color: #c8a96e; }
+  .stat-lab { font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 0.07em; text-transform: uppercase; }
+
+  /* TESTIMONIALS */
+  .testi-sec { padding: 0 28px 52px; }
+  .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .testi-card { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: 3px; padding: 18px; }
+  .stars { color: #c8a96e; font-size: 12px; letter-spacing: 2px; margin-bottom: 9px; }
+  .testi-text { font-size: 12px; color: var(--color-text-secondary); line-height: 1.65; margin-bottom: 12px; }
+  .testi-author { display: flex; align-items: center; gap: 8px; }
+  .author-av { width: 26px; height: 26px; border-radius: 50%; background: rgba(200,169,110,0.2); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; color: #c8a96e; }
+  .author-name { font-size: 11px; font-weight: 500; color: var(--color-text-primary); }
+  .author-ver { font-size: 10px; color: var(--color-text-secondary); }
+
+  /* GUARANTEE */
+  .guarantee { background: #111; display: flex; border-top: 0.5px solid rgba(255,255,255,0.07); }
+  .guar-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 26px; border-right: 0.5px solid rgba(255,255,255,0.07); text-align: center; }
+  .guar-item:last-child { border-right: none; }
+  .guar-icon { font-size: 20px; }
+  .guar-title { font-size: 12px; font-weight: 500; color: #fff; }
+  .guar-sub { font-size: 10px; color: rgba(255,255,255,0.4); }
+
+  /* NEWSLETTER */
+  .nl-sec { background: var(--color-background-secondary); padding: 48px 28px; text-align: center; border-top: 0.5px solid var(--color-border-tertiary); }
+  .nl-title { font-size: 20px; font-weight: 500; margin-bottom: 7px; }
+  .nl-sub { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 22px; }
+  .nl-form { display: flex; max-width: 400px; margin: 0 auto; gap: 8px; }
+  .nl-form input { flex: 1; padding: 11px 14px; font-size: 13px; border: 0.5px solid var(--color-border-secondary); border-radius: 2px; background: var(--color-background-primary); color: var(--color-text-primary); outline: none; }
+  .nl-form button { background: #111; color: #fff; border: none; padding: 11px 18px; font-size: 11px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; cursor: pointer; border-radius: 2px; }
+
+  /* FOOTER */
+  .footer { background: #0d0d0d; color: rgba(255,255,255,0.5); padding: 44px 28px 24px; }
+  .footer-grid { display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr; gap: 36px; margin-bottom: 36px; }
+  .ft-logo { font-size: 13px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #fff; margin-bottom: 10px; }
+  .ft-tag { font-size: 11px; color: rgba(255,255,255,0.35); line-height: 1.65; max-width: 180px; }
+  .ft-col-title { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 12px; }
+  .ft-link { display: block; font-size: 11px; color: rgba(255,255,255,0.38); text-decoration: none; margin-bottom: 8px; cursor: pointer; transition: color 0.2s; }
+  .ft-link:hover { color: rgba(255,255,255,0.8); }
+  .ft-bottom { border-top: 0.5px solid rgba(255,255,255,0.07); padding-top: 18px; display: flex; justify-content: space-between; align-items: center; }
+  .ft-copy { font-size: 10px; color: rgba(255,255,255,0.28); }
+  .ft-payments { display: flex; gap: 6px; }
+  .pay-pill { background: rgba(255,255,255,0.07); border-radius: 2px; padding: 3px 7px; font-size: 9px; color: rgba(255,255,255,0.38); font-weight: 500; letter-spacing: 0.04em; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--color-background-primary); border-radius: 4px; max-width: 520px; width: 94%; max-height: 92vh; overflow-y: auto; position: relative; }
+  .modal-close { position: absolute; top: 14px; right: 14px; background: none; border: none; cursor: pointer; color: var(--color-text-secondary); font-size: 18px; }
+  .modal-imgs { display: grid; grid-template-columns: 72px 1fr; gap: 10px; padding: 20px; }
+  .modal-thumbs { display: flex; flex-direction: column; gap: 6px; }
+  .modal-thumb { width: 64px; height: 64px; border-radius: 2px; overflow: hidden; cursor: pointer; border: 1.5px solid transparent; transition: border-color 0.2s; }
+  .modal-thumb.active { border-color: #111; }
+  .modal-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .modal-main-img { border-radius: 2px; overflow: hidden; aspect-ratio: 3/4; }
+  .modal-main-img img { width: 100%; height: 100%; object-fit: cover; }
+  .modal-info { padding: 0 20px 24px; }
+  .modal-cat { font-size: 10px; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
+  .modal-name { font-size: 18px; font-weight: 500; margin-bottom: 6px; }
+  .modal-price { font-size: 16px; font-weight: 500; margin-bottom: 16px; color: var(--color-text-primary); }
+  .modal-section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 8px; }
+  .modal-swatches { display: flex; gap: 8px; margin-bottom: 16px; }
+  .modal-swatch { width: 24px; height: 24px; border-radius: 50%; border: 0.5px solid var(--color-border-secondary); cursor: pointer; transition: transform 0.15s; position: relative; }
+  .modal-swatch.active::after { content: ''; position: absolute; inset: -3px; border-radius: 50%; border: 1.5px solid var(--color-text-primary); }
+  .modal-sizes { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .modal-size { padding: 7px 14px; font-size: 12px; border: 0.5px solid var(--color-border-secondary); border-radius: 2px; cursor: pointer; color: var(--color-text-primary); background: none; transition: all 0.15s; }
+  .modal-size.active { background: #111; color: #fff; border-color: #111; }
+  .modal-size:hover:not(.active) { border-color: var(--color-border-primary); }
+  .modal-stock { font-size: 12px; font-weight: 500; color: #27ae60; margin-bottom: 14px; }
+  .modal-add { width: 100%; background: #111; color: #fff; border: none; padding: 14px; font-size: 13px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; cursor: pointer; border-radius: 2px; margin-bottom: 10px; transition: background 0.2s; }
+  .modal-add:hover { background: #333; }
+  .modal-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.7; margin-top: 16px; border-top: 0.5px solid var(--color-border-tertiary); padding-top: 14px; }
+  .size-guide-strip { background: var(--color-background-secondary); border-top: 0.5px solid var(--color-border-tertiary); border-bottom: 0.5px solid var(--color-border-tertiary); padding: 16px 28px; display: flex; align-items: center; justify-content: space-between; margin-top: 20px; }
+  .sz-left { display: flex; align-items: center; gap: 10px; }
+  .sz-title { font-size: 13px; font-weight: 500; }
+  .sz-sub { font-size: 11px; color: var(--color-text-secondary); }
+  .btn-sz { background: none; border: 0.5px solid var(--color-border-secondary); padding: 7px 14px; font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; border-radius: 2px; color: var(--color-text-primary); }
+</style>
+</head>
+<body>
+<div class="store">
+
+  <!-- ANNOUNCEMENT BAR -->
+  <div class="announce-bar">🎉 Free shipping on orders over $50 &nbsp;|&nbsp; New drops just added &nbsp;|&nbsp; Use code DGC10 for 10% off your first order</div>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo-wrap">
+      <div class="logo-circle">
+        <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.5" stroke="#fff" stroke-width="1.3"/><path d="M6 9h6M9 6v6" stroke="#c8a96e" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </div>
+      <span class="logo-name">Democrat Gun Club</span>
+    </div>
+    <nav class="header-nav">
+      <a>Shop</a>
+      <a>Collections</a>
+      <a>About</a>
+      <a>Contact</a>
+    </nav>
+    <div class="header-icons">
+      <button class="icon-btn"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.2"/><path d="M9.5 9.5l3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+      <button class="icon-btn"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="5" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M2 14c0-3 2.5-4.5 5.5-4.5S13 11 13 14" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+      <div class="cart-wrap">
+        <button class="icon-btn"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 2h1.2l2 7h5.6l1.2-4.5H4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.5" cy="12.5" r="1" fill="currentColor"/><circle cx="11" cy="12.5" r="1" fill="currentColor"/></svg></button>
+        <span class="cart-dot">0</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO with real product images -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-left">
+      <div class="hero-eyebrow">New Collection 2026</div>
+      <h1 class="hero-title">Wear Your <em>Values.</em><br>Own Your Style.</h1>
+      <p class="hero-sub">Bold apparel for those who refuse to choose between their politics and their lifestyle. Made for the movement.</p>
+      <div class="hero-ctas">
+        <button class="btn-gold">Shop the Collection</button>
+        <button class="btn-ghost">Our Story</button>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-img-grid">
+        <div class="hero-img-cell"><img src="https://democratgunclub.com/cdn/shop/files/unisex-oversized-heavyweight-hoodie-athletic-heather-front-68d6b5711e601.jpg?v=1772923378&width=400" alt="Hoodie" loading="eager"></div>
+        <div class="hero-img-cell"><img src="https://democratgunclub.com/cdn/shop/files/womens-relaxed-t-shirt-athletic-heather-front-68d6b5718a82b.jpg?v=1772923379&width=400" alt="T-Shirt" loading="eager"></div>
+        <div class="hero-img-cell"><img src="https://democratgunclub.com/cdn/shop/files/classic-rope-cap-black-white-front-68d6b5708d660.jpg?v=1772923381&width=400" alt="Cap" loading="eager"></div>
+        <div class="hero-img-cell"><img src="https://democratgunclub.com/cdn/shop/files/retro-trucker-hat-black-white-front-68d6b574ebd81.jpg?v=1772923389&width=400" alt="Trucker" loading="eager"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST BAR -->
+  <div class="trust-bar">
+    <div class="trust-item"><span class="trust-icon">🚚</span><span class="trust-text">Free shipping over $50</span></div>
+    <div class="trust-item"><span class="trust-icon">↩️</span><span class="trust-text">30-day free returns</span></div>
+    <div class="trust-item"><span class="trust-icon">🇺🇸</span><span class="trust-text">American-made pride</span></div>
+    <div class="trust-item"><span class="trust-icon">🔒</span><span class="trust-text">Secure checkout</span></div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div class="sec-head">
+    <div class="sec-eyebrow">The Collection</div>
+    <div class="sec-title">All Products — 17 Items</div>
+    <div class="sec-sub">Every item available to ship now. Click any product to see colors, sizes, and details.</div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <div class="filter-tabs">
+      <button class="filter-tab active">All</button>
+      <button class="filter-tab">Tops</button>
+      <button class="filter-tab">Hats</button>
+      <button class="filter-tab">Accessories</button>
+      <button class="filter-tab">In Stock</button>
+    </div>
+    <select class="sort-sel">
+      <option>Featured</option>
+      <option>Price: Low to High</option>
+      <option>Price: High to Low</option>
+      <option>Newest</option>
+    </select>
+  </div>
+
+  <!-- REAL PRODUCT GRID -->
+  <div class="product-grid" id="pgrid">
+
+    <!-- 1 Oversized Hoodie -->
+    <div class="product-card" onclick="openModal(0)">
+      <div class="product-img-wrap">
+        <img class="main-img" src="https://democratgunclub.com/cdn/shop/files/unisex-oversized-heavyweight-hoodie-athletic-heather-front-68d6b5711e601.jpg?v=1772923378&width=400" alt="Oversized Hoodie">
+        <img class="hover-img" src="https://democratgunclub.com/cdn/shop/files/unisex-oversized-heavyweight-hoodie-dust-front-68d6b5711e732.jpg?v=1772923378&width=400" alt="Hoodie alt">
+        <span class="product-badge badge-hot">Bestseller</span>
+        <div class="quick-add">Quick View</div>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">Outerwear</div>
+        <div class="product-name">Oversized Heavyweight Hoodie</div>
+        <div class="swatches">
+          <div class="swatch active" style="background:#9a9a9a;" title="Athletic Heather"></div>
+          <div class="swatch" style="background:#c8b99a;" title="Dust"></div>
+          <div class="swatch" style="background:#111;" title="Black"></div>
+        </div>
+        <div class="price-row"><span class="price">$50.00</span><span class="stock-ok">In stock</span></div>
+      </div>
+    </div>
+
+    <!-- 2 Women's Relaxed T-Shirt -->
+    <div class="product-card" onclick="openModal(1)">
+      <div class="product-img-wrap">
+        <img class="main-img" src="https://democratgunclub.com/cdn/shop/files/womens-relaxed-t-shirt-athletic-heather-front-68d6b5718a82b.jpg?v=1772923379&width=400" alt="Women's T-Shirt">
+        <img class="hover-img" src="https://democratgunclub.com/cdn/shop/files/womens-relaxed-t-shirt-citron-front-68d6b5718b596.jpg?v=1772923380&width=400" alt="Women's T-Shirt alt">
+        <span class="product-badge badge-new">New</span>
+        <div class="quick-add">Quick View</div>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">Women's</div>
+        <div class="product-name">DGC Women's Relaxed T-Shirt</div>
+        <div class="swatches">
+          <div class="swatch active" style="background:#b0b0b0;" title="Heather"></div>
+          <div class="swatch" style="background:#d4c94a;" title="Citron"></div>
+          <div class="swatch" style="background:#111;" title="Black"></div>
+        </div>
+        <div class="price-row"><span class="price">$25.00</span><span class="stock-ok">In stock</span></div>
+      </div>
+    </div>
+
+    <!-- 3 Classic Rope Cap -->
+    <div class="product-card" onclick="openModal(2)">
+      <div class="product-img-wrap">
+        <img class="main-img" src="https://democratgunclub.com/cdn/shop/files/classic-rope-cap-black-white-front-68d6b5708d660.jpg?v=1772923381&width=400" alt="Classic Rope Cap">
+        <img class="hover-img" src="https://democratgunclub.com/cdn/shop/files/classic-rope-cap-light-blue-white-front-68d6b5708e54b.jpg?v=1772923382&width=400" alt="Rope Cap Blue">
+        <div class="quick-add">Quick View</div>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">Hats</div>
+        <div class="product-name">Classic Rope Cap</div>
+        <div class="swatches">
+          <div class="swatch active" style="background:#111;" title="Black/White"></div>
+          <div class="swatch" style="background:#8bb5d4;" title="Light Blue/White"></div>
+        </div>
+        <div class="price-row"><span class="price">$30.00</span><span class="stock-ok">In stock</span></div>
+      </div>
+    </div>
+
+    <!-- 4 Classic Rope Cap v2 -->
+    <div class="product-card" onclick="openModal(3)">
+      <div class="product-img-wrap">
+        <img class="main-img" src="https://democratgunclub.com/cdn/shop/files/classic-rope-cap-black-white-front-69ab1804e9269.jpg?v=1772923422&width=400" alt="Classic Rope Cap 2">
+        <div class="quick-add">Quick View</div>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">Hats</div>
+        <div class="product-name">Classic Rope Cap — Alt Style</div>
+        <div class="swatches">
+          <div class="swatch active" style="background:#222;" title="Black"></div>
+        </div>
+        <div class="price-row"><span class="price">$25.00</span><span class="stock-ok">In stock</span></div>
+      </div>
+    </div>
+
+    <!-- 5 Cuffed Beanie -->
+    <div class="product-card" onclick="openModal(4)">
+      <div class="product-img-wrap">
+        <img class="main-img" src="https://democratgunclub.com/cdn/shop/files/cuffed-beanie-black-front-6923b0e2146af.jpg?v=1772923408&width=400" alt="Cuffed Beanie">
+        <span class="product-badge badge-new">New</span>
+        <div class="quick-add">Quick View</div>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">Hats</div>
+        <div class="product-name">Cuffed Beanie</div>
+        <div class="swatches">
+          <div class="swatch active" style="background:#111;" title="Black"></div>
+          <div class="swatch" style="background:#555;" title="Dark Grey"></div>
+        </div>
+        <div class="price-row"><span class="price">$19.50</span><span class="stock-ok">In stock</span></div>
+      </div>
+    </div>
+
+    <!-- 6 Dad Hat -->
+    <div class="product-card" onclick="openModal(5)">
+      <div class="product-img-wrap">
+        <img class="main-img" src="https://democratgunclub.com/cdn/shop/files/classic-dad-hat-white-front-692092feee65e.jpg?v=1772923401&width=400" alt="Dad Hat">
+        <div class="quick-add">Quick View</div>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">Hats</div>
+        <div class="product-name">Dad Hat</div>
+        <div class="swatches">
+          <div class="swatch active" style="background:#f0ede8; border: 0.5px solid #ccc;" title="White"></div>
+          <div class="swatch" style="background:#111;" title="Black"></div>
+        </div>
+        <div class="price-row"><span class="price">$24.50</span><span class="stock-ok">In stock</span></div>
+      </div>
+    </div>
+
+    <!-- 7 DGC Patch -->
+    <div class="product-card" onclick="openModal(6)">
+      <div class="product-img-wrap">
+        <img class="main-img" src="https://democratgunclub.com/cdn/shop/files/embroidered-patches-white-square-3x3-front-68d70f9a92d7d.jpg?v=1772923397&width=400" alt="DGC Patch">
+        <div class="quick-add">Quick View</div>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">Accessories</div>
+        <div class="product-name">DGC Embroidered Patch</div>
+        <div class="swatches">
+          <div class="swatch active" style="background:#f5f5f5; border:0.5px solid #ccc;" title="White"></div>
+        </div>
+        <div class="price-row"><span class="price">$12.00</span><span class="stock-ok">In stock</span></div>
+      </div>
+    </div>
+
+    <!-- 8 Trucker Cap -->
+    <div class="product-card" onclick="openModal(7)">
+      <div class="product-img-wrap">
+        <img class="main-img" src="https://democratgunclub.com/cdn/shop/files/retro-trucker-hat-black-white-front-68d6b574ebd81.jpg?v=1772923389&width=400" alt="Trucker Cap">
+        <div class="quick-add">Quick View</div>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">Hats</div>
+        <div class="product-name">DGC Trucker Cap</div>
+        <div class="swatches">
+          <div class="swatch active" style="background:#111;" title="Black/White"></div>
+        </div>
+        <div class="price-row"><span class="price">$30.00</span><span class="stock-ok">In stock</span></div>
+      </div>
+    </div>
+
+    <!-- 9 Unisex Classic Tee -->
+    <div class="product-card" onclick="openModal(8)">
+      <div class="product-img-wrap">
+        <img class="main-img" src="https://democratgunclub.com/cdn/shop/files/unisex-classic-tee-ash-front-68d6b5715a864.jpg?v=1772923386&width=400" alt="Classic Tee">
+        <span class="product-badge badge-hot">Popular</span>
+        <div class="quick-add">Quick View</div>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">Tops</div>
+        <div class="product-name">DGC Unisex Classic Tee</div>
+        <div class="swatches">
+          <div class="swatch active" style="background:#c0bcb4;" title="Ash"></div>
+          <div class="swatch" style="background:#111;" title="Black"></div>
+          <div class="swatch" style="background:#fff; border:0.5px solid #ccc;" title="White"></div>
+        </div>
+        <div class="price-row"><span class="price">$25.00</span><span class="stock-ok">In stock</span></div>
+      </div>
+    </div>
+
+    <!-- 10 White Mug -->
+    <div class="product-card" onclick="openModal(9)">
+      <div class="product-img-wrap">
+        <img class="main-img" src="https://democratgunclub.com/cdn/shop/files/white-glossy-mug-white-11-oz-handle-on-right-68fd2ac10b9c7.jpg?v=1772923397&width=400" alt="White Mug">
+        <img class="hover-img" src="https://democratgunclub.com/cdn/shop/files/white-glossy-mug-white-11-oz-handle-on-left-68fd2ac10bab1.jpg?v=1772923397&width=400" alt="White Mug back">
+        <div class="quick-add">Quick View</div>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">Drinkware</div>
+        <div class="product-name">DGC White Glossy Mug</div>
+        <div class="swatches">
+          <div class="swatch active" style="background:#fff; border:0.5px solid #ccc;" title="White 11oz"></div>
+        </div>
+        <div class="price-row"><span class="price">From $8.00</span><span class="stock-ok">In stock</span></div>
+      </div>
+    </div>
+
+    <!-- 11 Long Sleeve (Sold Out) -->
+    <div class="product-card" onclick="openModal(10)">
+      <div class="product-img-wrap" style="opacity:0.7;">
+        <img class="main-img" src="https://democratgunclub.com/cdn/shop/files/unisex-garment-dyed-heavyweight-long-sleeve-shirt-blue-jean-front-68d6b5f9a63e3.jpg?v=1772923394&width=400" onerror="this.src='https://democratgunclub.com/cdn/shop/files/unisex-garment-dyed-heavyweight-long-sleeve-shirt-blue-jean-front-68d6c1f9a63e3.jpg?v=1772923394&width=400'" alt="Long Sleeve">
+        <span class="product-badge badge-sold">Sold Out</span>
+        <div class="quick-add">Notify Me</div>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">Tops</div>
+        <div class="product-name">Garment-Dyed Heavyweight Long Sleeve</div>
+        <div class="swatches">
+          <div class="swatch active" style="background:#5b7ca1;" title="Blue Jean"></div>
+        </div>
+        <div class="price-row"><span class="price">$35.00</span><span class="stock-out">Sold out</span></div>
+      </div>
+    </div>
+
+    <!-- 12 Long Sleeve v2 -->
+    <div class="product-card" onclick="openModal(11)">
+      <div class="product-img-wrap">
+        <img class="main-img" src="https://democratgunclub.com/cdn/shop/files/unisex-garment-dyed-heavyweight-long-sleeve-shirt-blue-jean-front-68d6c164d08ec.jpg?v=1772923391&width=400" alt="Long Sleeve 2">
+        <div class="quick-add">Quick View</div>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">Tops</div>
+        <div class="product-name">Heavyweight Long Sleeve — Alt</div>
+        <div class="swatches">
+          <div class="swatch active" style="background:#5b7ca1;" title="Blue Jean"></div>
+          <div class="swatch" style="background:#4a3f35;" title="Dark Brown"></div>
+        </div>
+        <div class="price-row"><span class="price">$35.00</span><span class="stock-ok">In stock</span></div>
+      </div>
+    </div>
+
+    <!-- 13 Men's Box Hoodie -->
+    <div class="product-card" onclick="openModal(12)">
+      <div class="product-img-wrap">
+        <img class="main-img" src="https://democratgunclub.com/cdn/shop/files/mens-box-hoodie-i-cotton-heritage-m2635-black-front-6935cd3e59220.jpg?v=1772923418&width=400" alt="Box Hoodie">
+        <span class="product-badge badge-new">New</span>
+        <div class="quick-add">Quick View</div>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">Outerwear</div>
+        <div class="product-name">Men's Box Hoodie</div>
+        <div class="swatches">
+          <div class="swatch active" style="background:#111;" title="Black"></div>
+          <div class="swatch" style="background:#555;" title="Dark Grey"></div>
+        </div>
+        <div class="price-row"><span class="price">$40.00</span><span class="stock-ok">In stock</span></div>
+      </div>
+    </div>
+
+    <!-- 14 Men's Tank Top -->
+    <div class="product-card" onclick="openModal(13)">
+      <div class="product-img-wrap">
+        <img class="main-img" src="https://democratgunclub.com/cdn/shop/files/mens-premium-tank-top-black-front-6935ce44be8b1.jpg?v=1772923420&width=400" alt="Tank Top">
+        <div class="quick-add">Quick View</div>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">Tops</div>
+        <div class="product-name">Men's Premium Tank Top</div>
+        <div class="swatches">
+          <div class="swatch active" style="background:#111;" title="Black"></div>
+          <div class="swatch" style="background:#fff; border:0.5px solid #ccc;" title="White"></div>
+        </div>
+        <div class="price-row"><span class="price">From $22.00</span><span class="stock-ok">In stock</span></div>
+      </div>
+    </div>
+
+    <!-- 15 Stickers -->
+    <div class="product-card" onclick="openModal(14)">
+      <div class="product-img-wrap">
+        <img class="main-img" src="https://democratgunclub.com/cdn/shop/files/kiss-cut-stickers-white-4x4-default-68fd2c9018eaa.jpg?v=1772923400&width=400" alt="Stickers">
+        <span class="product-badge badge-hot">Popular</span>
+        <div class="quick-add">Quick View</div>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">Accessories</div>
+        <div class="product-name">Kiss-Cut Stickers</div>
+        <div class="swatches">
+          <div class="swatch active" style="background:#fff; border:0.5px solid #ccc;" title="White"></div>
+        </div>
+        <div class="price-row"><span class="price">From $4.00</span><span class="stock-ok">In stock</span></div>
+      </div>
+    </div>
+
+    <!-- 16 Bubble-free Stickers -->
+    <div class="product-card" onclick="openModal(15)">
+      <div class="product-img-wrap">
+        <img class="main-img" src="https://democratgunclub.com/cdn/shop/files/F0255E02-6466-4B70-9552-43F1ACFFD8EF.png?v=1759454319&width=400" alt="Bubble-free Stickers">
+        <div class="quick-add">Quick View</div>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">Accessories</div>
+        <div class="product-name">Bubble-Free Stickers</div>
+        <div class="swatches">
+          <div class="swatch active" style="background:#fff; border:0.5px solid #ccc;" title="White"></div>
+        </div>
+        <div class="price-row"><span class="price">From $4.00</span><span class="stock-ok">In stock</span></div>
+      </div>
+    </div>
+
+    <!-- 17 Unisex Classic Tee v2 -->
+    <div class="product-card" onclick="openModal(16)">
+      <div class="product-img-wrap">
+        <img class="main-img" src="https://democratgunclub.com/cdn/shop/files/unisex-classic-tee-ash-front-68d6b5715a864.jpg?v=1772923386&width=400" alt="Classic Tee 2">
+        <div class="quick-add">Quick View</div>
+      </div>
+      <div class="product-info">
+        <div class="product-cat">Tops</div>
+        <div class="product-name">DGC Classic Tee — Extended Sizes</div>
+        <div class="swatches">
+          <div class="swatch active" style="background:#c0bcb4;" title="Ash"></div>
+          <div class="swatch" style="background:#111;" title="Black"></div>
+        </div>
+        <div class="price-row"><span class="price">$25.00</span><span class="stock-ok">In stock</span></div>
+      </div>
+    </div>
+
+  </div><!-- end product-grid -->
+
+  <!-- SIZE GUIDE STRIP -->
+  <div class="size-guide-strip">
+    <div class="sz-left">
+      <span style="font-size:20px;">📏</span>
+      <div>
+        <div class="sz-title">Not sure about your size?</div>
+        <div class="sz-sub">View our complete size guide with measurements for every item</div>
+      </div>
+    </div>
+    <button class="btn-sz">View Size Guide</button>
+  </div>
+
+  <!-- SHOP THE LOOK -->
+  <div class="sec-head">
+    <div class="sec-eyebrow">Style Inspiration</div>
+    <div class="sec-title">Complete the Look</div>
+    <div class="sec-sub">Click the pins on the outfit to add pieces directly to your cart and see how items work together.</div>
+  </div>
+  <div class="stl-wrap">
+    <div class="stl-box">
+      <div class="stl-img-side">
+        <img src="https://democratgunclub.com/cdn/shop/files/unisex-oversized-heavyweight-hoodie-athletic-heather-front-690d0055e7a2a.png?v=1762461389&width=600" alt="Shop the look" onerror="this.style.display='none'">
+        <div class="stl-pin" style="top:28%;left:38%;">1</div>
+        <div class="stl-pin" style="top:60%;left:55%;">2</div>
+        <div class="stl-pin" style="top:75%;left:28%;">3</div>
+      </div>
+      <div class="stl-right">
+        <div>
+          <div class="stl-heading">The Movement Look</div>
+          <div class="stl-heading-sub">3 pieces · Mix &amp; match to complete the fit</div>
+        </div>
+        <div class="stl-row">
+          <div class="stl-thumb"><img src="https://democratgunclub.com/cdn/shop/files/unisex-oversized-heavyweight-hoodie-athletic-heather-front-68d6b5711e601.jpg?v=1772923378&width=150" alt="Hoodie"></div>
+          <div class="stl-info">
+            <div class="stl-pname">Oversized Heavyweight Hoodie</div>
+            <div class="stl-pprice">$50.00 · Athletic Heather</div>
+          </div>
+          <button class="stl-add-btn">Add</button>
+        </div>
+        <div class="stl-row">
+          <div class="stl-thumb"><img src="https://democratgunclub.com/cdn/shop/files/classic-rope-cap-black-white-front-68d6b5708d660.jpg?v=1772923381&width=150" alt="Cap"></div>
+          <div class="stl-info">
+            <div class="stl-pname">Classic Rope Cap</div>
+            <div class="stl-pprice">$30.00 · Black/White</div>
+          </div>
+          <button class="stl-add-btn">Add</button>
+        </div>
+        <div class="stl-row">
+          <div class="stl-thumb"><img src="https://democratgunclub.com/cdn/shop/files/embroidered-patches-white-square-3x3-front-68d70f9a92d7d.jpg?v=1772923397&width=150" alt="Patch"></div>
+          <div class="stl-info">
+            <div class="stl-pname">DGC Embroidered Patch</div>
+            <div class="stl-pprice">$12.00</div>
+          </div>
+          <button class="stl-add-btn">Add</button>
+        </div>
+        <div class="stl-footer">
+          <div>
+            <div style="font-size:11px;color:var(--color-text-secondary);">Complete look</div>
+            <div class="stl-total-price">$92.00</div>
+          </div>
+          <button class="stl-buy-btn">Add All to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRAND -->
+  <section class="brand-sec">
+    <div class="brand-img-side">
+      <img src="https://democratgunclub.com/cdn/shop/files/unisex-oversized-heavyweight-hoodie-athletic-heather-front-2-690d0055e67b4.png?v=1762460461&width=600" alt="Brand" style="filter:brightness(0.75);">
+    </div>
+    <div class="brand-content">
+      <div class="brand-ey">Our Mission</div>
+      <h2 class="brand-title">Bridging Values &amp; Style Since Day One</h2>
+      <p class="brand-body">Democrat Gun Club was born from a simple belief: you shouldn't have to choose between your political identity and your love of the outdoors. We create apparel for the people who defy easy labels.</p>
+      <div class="brand-stats">
+        <div><div class="stat-num">5k+</div><div class="stat-lab">Members</div></div>
+        <div><div class="stat-num">17</div><div class="stat-lab">Products</div></div>
+        <div><div class="stat-num">100%</div><div class="stat-lab">Ethical</div></div>
+      </div>
+      <button class="btn-gold">Join the Movement</button>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <div class="sec-head">
+    <div class="sec-eyebrow">Reviews</div>
+    <div class="sec-title">What Members Are Saying</div>
+  </div>
+  <div class="testi-sec">
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <div class="testi-text">"Finally a brand that gets it. The hoodie is incredibly comfortable and the quality is above what I expected. Got three compliments the first day."</div>
+        <div class="testi-author"><div class="author-av">JM</div><div><div class="author-name">James M.</div><div class="author-ver">Verified buyer</div></div></div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <div class="testi-text">"The relaxed tee fits perfectly. Soft, breathable, and the print hasn't faded after 10+ washes. Exactly what I needed for everyday wear."</div>
+        <div class="testi-author"><div class="author-av">SR</div><div><div class="author-name">Sarah R.</div><div class="author-ver">Verified buyer</div></div></div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <div class="testi-text">"Love the rope cap. The detail is super clean and it sits perfectly. Ordered two — one for me and one for my dad."</div>
+        <div class="testi-author"><div class="author-av">TK</div><div><div class="author-name">Tyler K.</div><div class="author-ver">Verified buyer</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GUARANTEE -->
+  <div class="guarantee">
+    <div class="guar-item"><span class="guar-icon">🛡️</span><div class="guar-title">30-Day Guarantee</div><div class="guar-sub">Full refund, no questions</div></div>
+    <div class="guar-item"><span class="guar-icon">♻️</span><div class="guar-title">Ethically Sourced</div><div class="guar-sub">Responsible materials only</div></div>
+    <div class="guar-item"><span class="guar-icon">🌍</span><div class="guar-title">Worldwide Shipping</div><div class="guar-sub">Fast &amp; tracked delivery</div></div>
+    <div class="guar-item"><span class="guar-icon">💬</span><div class="guar-title">Real Support</div><div class="guar-sub">Humans, not bots</div></div>
+  </div>
+
+  <!-- NEWSLETTER -->
+  <div class="nl-sec">
+    <div class="sec-eyebrow" style="text-align:center;margin-bottom:8px;">Stay connected</div>
+    <div class="nl-title">Join the Movement</div>
+    <div class="nl-sub">Get early access to drops, member-only discounts, and DGC news.</div>
+    <div class="nl-form">
+      <input type="email" placeholder="your@email.com">
+      <button>Subscribe</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <div class="ft-logo">Democrat Gun Club</div>
+        <div class="ft-tag">Wear your values. Own your story. Built for Americans who defy easy labels.</div>
+      </div>
+      <div>
+        <div class="ft-col-title">Shop</div>
+        <a class="ft-link">All Products</a>
+        <a class="ft-link">Hoodies</a>
+        <a class="ft-link">T-Shirts</a>
+        <a class="ft-link">Hats</a>
+        <a class="ft-link">Accessories</a>
+      </div>
+      <div>
+        <div class="ft-col-title">Support</div>
+        <a class="ft-link">Size Guide</a>
+        <a class="ft-link">Returns &amp; Refunds</a>
+        <a class="ft-link">Shipping Info</a>
+        <a class="ft-link">Contact Us</a>
+      </div>
+      <div>
+        <div class="ft-col-title">Company</div>
+        <a class="ft-link">Our Story</a>
+        <a class="ft-link">Instagram</a>
+        <a class="ft-link">Facebook</a>
+        <a class="ft-link">TikTok</a>
+      </div>
+    </div>
+    <div class="ft-bottom">
+      <div class="ft-copy">© 2026 Democrat Gun Club. All rights reserved.</div>
+      <div class="ft-payments">
+        <span class="pay-pill">VISA</span>
+        <span class="pay-pill">MC</span>
+        <span class="pay-pill">AMEX</span>
+        <span class="pay-pill">PayPal</span>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- end .store -->
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal" id="modal-box">
+    <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">✕</button>
+    <div class="modal-imgs">
+      <div class="modal-thumbs" id="modal-thumbs"></div>
+      <div class="modal-main-img"><img id="modal-main" src="" alt=""></div>
+    </div>
+    <div class="modal-info">
+      <div class="modal-cat" id="modal-cat"></div>
+      <div class="modal-name" id="modal-name"></div>
+      <div class="modal-price" id="modal-price"></div>
+      <div class="modal-section-label">Color</div>
+      <div class="modal-swatches" id="modal-swatches"></div>
+      <div class="modal-section-label">Size</div>
+      <div class="modal-sizes" id="modal-sizes"></div>
+      <div class="modal-stock" id="modal-stock">✓ In stock — ships in 2–4 business days</div>
+      <button class="modal-add">Add to Cart</button>
+      <div class="modal-desc" id="modal-desc"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const products = [
+  { name: "Oversized Heavyweight Hoodie", cat: "Outerwear", price: "$50.00", imgs: ["https://democratgunclub.com/cdn/shop/files/unisex-oversized-heavyweight-hoodie-athletic-heather-front-68d6b5711e601.jpg?v=1772923378&width=600","https://democratgunclub.com/cdn/shop/files/unisex-oversized-heavyweight-hoodie-dust-front-68d6b5711e732.jpg?v=1772923378&width=600"], colors:[{c:"#9a9a9a",n:"Athletic Heather"},{c:"#c8b99a",n:"Dust"},{c:"#111",n:"Black"}], sizes:["XS","S","M","L","XL","2XL"], desc:"Unisex oversized fit with premium heavyweight fabric. Soft fleece interior, ribbed cuffs and hem. Perfect for everyday wear.", stock:"In stock" },
+  { name: "DGC Women's Relaxed T-Shirt", cat: "Women's", price: "$25.00", imgs: ["https://democratgunclub.com/cdn/shop/files/womens-relaxed-t-shirt-athletic-heather-front-68d6b5718a82b.jpg?v=1772923379&width=600","https://democratgunclub.com/cdn/shop/files/womens-relaxed-t-shirt-citron-front-68d6b5718b596.jpg?v=1772923380&width=600"], colors:[{c:"#b0b0b0",n:"Heather"},{c:"#d4c94a",n:"Citron"},{c:"#111",n:"Black"}], sizes:["XS","S","M","L","XL"], desc:"Soft, relaxed fit women's tee with a flattering silhouette. Breathable fabric — perfect for all-day wear.", stock:"In stock" },
+  { name: "Classic Rope Cap", cat: "Hats", price: "$30.00", imgs: ["https://democratgunclub.com/cdn/shop/files/classic-rope-cap-black-white-front-68d6b5708d660.jpg?v=1772923381&width=600","https://democratgunclub.com/cdn/shop/files/classic-rope-cap-light-blue-white-front-68d6b5708e54b.jpg?v=1772923382&width=600"], colors:[{c:"#111",n:"Black/White"},{c:"#8bb5d4",n:"Light Blue/White"}], sizes:["One Size"], desc:"Timeless rope detail with an adjustable fit. Premium materials, distinctive DGC embroidery.", stock:"In stock" },
+  { name: "Classic Rope Cap — Alt Style", cat: "Hats", price: "$25.00", imgs: ["https://democratgunclub.com/cdn/shop/files/classic-rope-cap-black-white-front-69ab1804e9269.jpg?v=1772923422&width=600"], colors:[{c:"#222",n:"Black"}], sizes:["One Size"], desc:"Alternative colorway of the classic rope cap. Same quality construction and DGC branding.", stock:"In stock" },
+  { name: "Cuffed Beanie", cat: "Hats", price: "$19.50", imgs: ["https://democratgunclub.com/cdn/shop/files/cuffed-beanie-black-front-6923b0e2146af.jpg?v=1772923408&width=600"], colors:[{c:"#111",n:"Black"},{c:"#555",n:"Dark Grey"}], sizes:["One Size"], desc:"Classic cuffed beanie with DGC embroidery. Warm, soft, and versatile for any season.", stock:"In stock" },
+  { name: "Dad Hat", cat: "Hats", price: "$24.50", imgs: ["https://democratgunclub.com/cdn/shop/files/classic-dad-hat-white-front-692092feee65e.jpg?v=1772923401&width=600"], colors:[{c:"#f0ede8",n:"White"},{c:"#111",n:"Black"}], sizes:["One Size"], desc:"Low-profile unstructured dad hat with an adjustable strap. Subtle DGC logo embroidery.", stock:"In stock" },
+  { name: "DGC Embroidered Patch", cat: "Accessories", price: "$12.00", imgs: ["https://democratgunclub.com/cdn/shop/files/embroidered-patches-white-square-3x3-front-68d70f9a92d7d.jpg?v=1772923397&width=600"], colors:[{c:"#f5f5f5",n:"White"}], sizes:["3×3 inch"], desc:"Premium embroidered patch — iron-on or sew-on. Customize any jacket, bag, or hat.", stock:"In stock" },
+  { name: "DGC Trucker Cap", cat: "Hats", price: "$30.00", imgs: ["https://democratgunclub.com/cdn/shop/files/retro-trucker-hat-black-white-front-68d6b574ebd81.jpg?v=1772923389&width=600"], colors:[{c:"#111",n:"Black/White"}], sizes:["One Size"], desc:"Retro-style trucker cap with mesh back panel. Breathable for warm days, adjustable snap closure.", stock:"In stock" },
+  { name: "DGC Unisex Classic Tee", cat: "Tops", price: "$25.00", imgs: ["https://democratgunclub.com/cdn/shop/files/unisex-classic-tee-ash-front-68d6b5715a864.jpg?v=1772923386&width=600"], colors:[{c:"#c0bcb4",n:"Ash"},{c:"#111",n:"Black"},{c:"#fff",n:"White"}], sizes:["XS","S","M","L","XL","2XL"], desc:"The DGC staple tee. Classic unisex fit, premium 100% cotton, durable print.", stock:"In stock" },
+  { name: "DGC White Glossy Mug", cat: "Drinkware", price: "From $8.00", imgs: ["https://democratgunclub.com/cdn/shop/files/white-glossy-mug-white-11-oz-handle-on-right-68fd2ac10b9c7.jpg?v=1772923397&width=600","https://democratgunclub.com/cdn/shop/files/white-glossy-mug-white-11-oz-handle-on-left-68fd2ac10bab1.jpg?v=1772923397&width=600"], colors:[{c:"#fff",n:"White 11oz"}], sizes:["11oz","15oz"], desc:"High-gloss ceramic mug with full DGC wrap print. Dishwasher safe, microwave safe.", stock:"In stock" },
+  { name: "Garment-Dyed Heavyweight Long Sleeve", cat: "Tops", price: "$35.00", imgs: ["https://democratgunclub.com/cdn/shop/files/unisex-garment-dyed-heavyweight-long-sleeve-shirt-blue-jean-front-68d6c1f9a63e3.jpg?v=1772923394&width=600"], colors:[{c:"#5b7ca1",n:"Blue Jean"}], sizes:["S","M","L","XL"], desc:"Garment-dyed heavyweight long sleeve for a vintage washed look. Currently sold out — notify me.", stock:"Sold out" },
+  { name: "Heavyweight Long Sleeve — Alt", cat: "Tops", price: "$35.00", imgs: ["https://democratgunclub.com/cdn/shop/files/unisex-garment-dyed-heavyweight-long-sleeve-shirt-blue-jean-front-68d6c164d08ec.jpg?v=1772923391&width=600"], colors:[{c:"#5b7ca1",n:"Blue Jean"},{c:"#4a3f35",n:"Dark Brown"}], sizes:["S","M","L","XL","2XL"], desc:"Alternative colorway of the heavyweight long sleeve. Garment-dyed for a premium vintage look.", stock:"In stock" },
+  { name: "Men's Box Hoodie", cat: "Outerwear", price: "$40.00", imgs: ["https://democratgunclub.com/cdn/shop/files/mens-box-hoodie-i-cotton-heritage-m2635-black-front-6935cd3e59220.jpg?v=1772923418&width=600"], colors:[{c:"#111",n:"Black"},{c:"#555",n:"Dark Grey"}], sizes:["S","M","L","XL","2XL"], desc:"Box-cut men's hoodie with a roomy silhouette. Heritage cotton construction, oversized DGC chest logo.", stock:"In stock" },
+  { name: "Men's Premium Tank Top", cat: "Tops", price: "From $22.00", imgs: ["https://democratgunclub.com/cdn/shop/files/mens-premium-tank-top-black-front-6935ce44be8b1.jpg?v=1772923420&width=600"], colors:[{c:"#111",n:"Black"},{c:"#fff",n:"White"}], sizes:["S","M","L","XL"], desc:"Premium men's tank top with a clean cut and soft feel. Lightweight and breathable.", stock:"In stock" },
+  { name: "Kiss-Cut Stickers", cat: "Accessories", price: "From $4.00", imgs: ["https://democratgunclub.com/cdn/shop/files/kiss-cut-stickers-white-4x4-default-68fd2c9018eaa.jpg?v=1772923400&width=600"], colors:[{c:"#fff",n:"White"}], sizes:["4×4 inch"], desc:"Durable vinyl kiss-cut stickers. Bubble-free application, weatherproof for indoor and outdoor use.", stock:"In stock" },
+  { name: "Bubble-Free Stickers", cat: "Accessories", price: "From $4.00", imgs: ["https://democratgunclub.com/cdn/shop/files/F0255E02-6466-4B70-9552-43F1ACFFD8EF.png?v=1759454319&width=600"], colors:[{c:"#fff",n:"White"}], sizes:["Multiple sizes"], desc:"Bubble-free vinyl stickers designed for flawless application. Waterproof and UV-resistant.", stock:"In stock" },
+  { name: "DGC Classic Tee — Extended Sizes", cat: "Tops", price: "$25.00", imgs: ["https://democratgunclub.com/cdn/shop/files/unisex-classic-tee-ash-front-68d6b5715a864.jpg?v=1772923386&width=600"], colors:[{c:"#c0bcb4",n:"Ash"},{c:"#111",n:"Black"}], sizes:["XS","S","M","L","XL","2XL","3XL","4XL"], desc:"The DGC staple tee now available in extended sizing up to 4XL. Same great quality and fit.", stock:"In stock" },
+];
+
+let currentImgIndex = 0;
+
+function openModal(idx) {
+  const p = products[idx];
+  document.getElementById('modal-cat').textContent = p.cat;
+  document.getElementById('modal-name').textContent = p.name;
+  document.getElementById('modal-price').textContent = p.price;
+  document.getElementById('modal-desc').textContent = p.desc;
+  const stockEl = document.getElementById('modal-stock');
+  if (p.stock === 'Sold out') {
+    stockEl.textContent = '✗ Currently sold out — join waitlist';
+    stockEl.style.color = '#c0392b';
+    document.querySelector('.modal-add').textContent = 'Notify Me When Available';
+  } else {
+    stockEl.textContent = '✓ In stock — ships in 2–4 business days';
+    stockEl.style.color = '#27ae60';
+    document.querySelector('.modal-add').textContent = 'Add to Cart';
+  }
+  currentImgIndex = 0;
+  document.getElementById('modal-main').src = p.imgs[0];
+  // Thumbs
+  const thumbsEl = document.getElementById('modal-thumbs');
+  thumbsEl.innerHTML = p.imgs.map((img, i) => `<div class="modal-thumb ${i===0?'active':''}" onclick="setImg(${i},this,'${img}')"><img src="${img}" alt=""></div>`).join('');
+  // Swatches
+  const swEl = document.getElementById('modal-swatches');
+  swEl.innerHTML = p.colors.map((c, i) => `<div class="modal-swatch ${i===0?'active':''}" style="background:${c.c};border:0.5px solid var(--color-border-secondary);" title="${c.n}" onclick="setActive(this, 'modal-swatches')"></div>`).join('');
+  // Sizes
+  const szEl = document.getElementById('modal-sizes');
+  szEl.innerHTML = p.sizes.map((s,i)=>`<button class="modal-size ${i===0?'active':''}" onclick="setActive(this,'modal-sizes')">${s}</button>`).join('');
+  document.getElementById('modal').classList.add('open');
+}
+
+function setImg(idx, el, src) {
+  document.getElementById('modal-main').src = src;
+  document.querySelectorAll('.modal-thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function setActive(el, containerId) {
+  document.querySelectorAll(`#${containerId} .active`).forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal')) {
+    document.getElementById('modal').classList.remove('open');
+  }
+}
+
+// Filter tabs
+document.querySelectorAll('.filter-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
